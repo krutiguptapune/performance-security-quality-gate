@@ -17,7 +17,6 @@ jobs:
   # JOB 1: PERFORMANCE TESTING
   performance:
     name: Performance Testing
-
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -53,7 +52,6 @@ jobs:
   # JOB 2: SECURITY TESTING
   security:
     name: Security Testing
-
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -120,13 +118,14 @@ jobs:
           set +e
 
           docker run --rm \
+            --user 0:0 \
             --network qa-network \
-            -v "$PWD/reports:/zap/wrk/:rw" \
+            -v "$PWD:/zap/wrk/:rw" \
             ghcr.io/zaproxy/zaproxy:stable \
             zap-baseline.py \
             -t http://juice-shop:3000 \
-            -J zap-report.json \
-            -r zap-report.html \
+            -J reports/zap-report.json \
+            -r reports/zap-report.html \
             -I
 
           zap_status=$?
@@ -150,7 +149,7 @@ jobs:
             exit 1
           fi
 
-          echo "ZAP reports generated successfully."
+          echo "Both ZAP reports generated successfully."
 
       - name: Check High-risk findings
         run: npm run security:check
