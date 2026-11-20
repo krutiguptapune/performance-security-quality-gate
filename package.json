@@ -5,7 +5,9 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:api": "vitest run tests/restful-booker.test.ts",
+    "performance": "k6 run performance/load-test.js"
   },
   "keywords": [],
   "author": "",
