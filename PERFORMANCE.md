@@ -54,3 +54,32 @@ npm run performance
 Record actual measurements from the generated GitHub Actions performance report.
 
 Do not assume that meeting the thresholds on one run guarantees future performance.
+
+## Actual Test Execution Results
+
+The following results were recorded during a local
+k6 performance test.
+
+| Metric | Result |
+|---|---:|
+| Total requests | 46 |
+| Average response time | 463.5 ms |
+| p90 response time | 544.48 ms |
+| p95 response time | 587.6 ms |
+| Failed requests | 0% |
+| Successful checks | 100% |
+| Maximum virtual users | 2 |
+
+### Analysis
+
+The API returned successful responses for all 46
+requests, with no HTTP failures.
+
+However, the p95 response time was 587.6 ms,
+exceeding the configured 500 ms target.
+
+Therefore, the performance threshold failed.
+
+The target remains unchanged. Results from a
+public demo API can vary depending on network
+conditions and server load.
