@@ -28,8 +28,11 @@ export default function () {
 
   check(response, {
     "status code is 200": (r) => r.status === 200,
-    "response has a valid status": (r) => r.status === 200
+
+    "response content type is JSON": (r) =>
+      r.headers["Content-Type"]?.includes("application/json") === true
   });
+
 
   sleep(1);
 
