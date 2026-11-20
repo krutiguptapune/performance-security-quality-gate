@@ -14,17 +14,22 @@ permissions:
 
 jobs:
 
+  # JOB 1: PERFORMANCE TESTING
   performance:
     name: Performance Testing
 
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create reports folder
-        run: mkdir -p reports
+      - name: Prepare reports folder
+        run: |
+          mkdir -p reports
+          chmod 777 reports
 
       - name: Run k6 performance tests
         run: |
@@ -45,12 +50,15 @@ jobs:
           if-no-files-found: ignore
 
 
+  # JOB 2: SECURITY TESTING
   security:
     name: Security Testing
 
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -64,18 +72,22 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: npx vitest run tests/api-client.test.ts tests/zap-report-parser.test.ts
+        run: |
+          npx vitest run \
+            tests/api-client.test.ts \
+            tests/zap-report-parser.test.ts
 
       - name: Check TypeScript
         run: npm run typecheck
 
-      - name: Create reports folder
-        run: mkdir -p reports
+      - name: Prepare reports folder
+        run: |
+          mkdir -p reports
+          chmod 777 reports
 
       - name: Create Docker network
         run: docker network create qa-network
 
-      
       - name: Start Juice Shop
         run: |
           docker run -d \
@@ -88,14 +100,19 @@ jobs:
       - name: Wait for Juice Shop
         run: |
           for i in {1..30}; do
+
             if curl -fsS http://localhost:3000 > /dev/null; then
               echo "Juice Shop is ready!"
               exit 0
             fi
+
+            echo "Waiting for Juice Shop..."
             sleep 2
+
           done
 
           echo "Juice Shop failed to start."
+          docker logs juice-shop
           exit 1
 
       - name: Run OWASP ZAP baseline scan
@@ -113,7 +130,10 @@ jobs:
             -I
 
           zap_status=$?
+
           set -e
+
+          echo "ZAP exit code: $zap_status"
 
           if [ "$zap_status" -eq 3 ]; then
             echo "ZAP scanner encountered an error."
@@ -124,6 +144,13 @@ jobs:
             echo "ZAP JSON report was not generated."
             exit 1
           fi
+
+          if [ ! -s reports/zap-report.html ]; then
+            echo "ZAP HTML report was not generated."
+            exit 1
+          fi
+
+          echo "ZAP reports generated successfully."
 
       - name: Check High-risk findings
         run: npm run security:check
