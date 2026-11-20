@@ -83,3 +83,38 @@ Therefore, the performance threshold failed.
 The target remains unchanged. Results from a
 public demo API can vary depending on network
 conditions and server load.
+
+
+## Repeated Performance Test Results
+
+Three performance runs were conducted against the
+public Restful Booker API using the same load profile.
+
+| Metric | Run 1 | Run 2 | Run 3 |
+|---|---:|---:|---:|
+| Average response | 463.5 ms | 688.32 ms | 447.97 ms |
+| p95 response | 587.6 ms | 806.11 ms | 555.92 ms |
+| Failed requests | 0% | 0% | 0% |
+| Successful checks | 100% | 100% | 100% |
+
+### Findings
+
+All three runs exceeded the configured p95 target
+of 500 ms.
+
+Run 3 recorded the lowest p95 response time
+at 555.92 ms.
+
+All requests succeeded in all three runs.
+
+### Conclusion
+
+The API demonstrated functional reliability during
+these test executions but did not satisfy the
+configured response-time objective.
+
+Because the target is a public demo API, results
+may vary due to network latency and server load.
+
+The 500 ms threshold was retained rather than
+increased to force a passing result.
