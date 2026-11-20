@@ -7,7 +7,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "test:api": "vitest run tests/restful-booker.test.ts",
-    "performance": "k6 run performance/load-test.js"
+    "performance": "k6 run performance/load-test.js",
+    "security:check": "tsx security/parse-report.ts"
   },
   "keywords": [],
   "author": "",
